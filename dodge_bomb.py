@@ -50,8 +50,8 @@ def gameover(screen: pg.Surface) -> None:
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
     init_bb_imgs の Docstring
-    
-    :return: bb_imgsに爆弾の
+    :引数なし
+    :return: bb_imgsに爆弾のSurface
     :rtype: tuple[list[Surface], list[int]]
     """
     bb_imgs = []
@@ -104,11 +104,11 @@ def main():
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
 
-        idx = min(tmr//500,9)
-        center = bb_rct.center
-        bb_img = bb_imgs[idx]
-        bb_rct = bb_img.get_rect()
-        bb_rct.center = center
+        idx = min(tmr//500,9) #500カウントごとに加速度上昇。上限9
+        center = bb_rct.center #座標固定
+        bb_img = bb_imgs[idx] #何番目の加速か
+        bb_rct = bb_img.get_rect() #rect
+        bb_rct.center = center #座標を戻す
         for key, mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0]  # 横方向の移動量
@@ -119,8 +119,8 @@ def main():
         screen.blit(kk_img, kk_rct)
         
 
-        if tmr%500 == 0:
-            vx *= bb_accs[idx]
+        if tmr%500 == 0: #500秒ごとに実行。ifなしだと毎カウントごとに加速してしまう
+            vx *= bb_accs[idx] #加速適用
             vy *= bb_accs[idx]
         
         yoko,tate = check_bound(bb_rct)
