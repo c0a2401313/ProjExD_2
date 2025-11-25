@@ -61,8 +61,7 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
         bb_img.colorkey((0 , 0, 0))
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
         bb_imgs.append(bb_img)
-    return bb_imgs,bb_accs
-        
+    return bb_imgs,bb_accs        
 
 
 def main():
@@ -85,14 +84,13 @@ def main():
     clock = pg.time.Clock()
     tmr = 0
     
-    
 
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
             
-        
+    
         if kk_rct.colliderect(bb_rct):
             gameover(screen)
             pg.display.update()
