@@ -16,7 +16,7 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def check_bound(obj_rct:pg.Rect)-> tuple[bool,bool]:
     """
-    引数：効果トンRectまたは爆弾Rect
+    引数：こうかとんRectまたは爆弾Rect
     戻り値：判定結果タプル（横方向,縦方向）
     画面内ならTrue 画面外ならFalse
     """
@@ -41,11 +41,17 @@ def gameover(screen: pg.Surface) -> None:
     
 
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    """
+    init_bb_imgs の Docstring
+    
+    :return: bb_imgsに爆弾の画像
+    :rtype: tuple[list[Surface], list[int]]
+    """
     bb_imgs=[]
     bb_accs = [a for a in range(1, 11)]
     for r in range(1, 11):
         bb_img = pg.Surface((20*r, 20*r))
-        bb_img.set_colorkey((0 , 0, 0))
+        bb_img.sのt_colorkey((0 , 0, 0))
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
         bb_imgs.append(bb_img)
     return bb_imgs,bb_accs
