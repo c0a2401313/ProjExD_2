@@ -2,7 +2,7 @@ import os
 import random 
 import sys
 import pygame as pg
-
+import time
 
 WIDTH, HEIGHT = 1100, 650
 DELTA = {
@@ -28,6 +28,30 @@ def check_bound(obj_rct:pg.Rect)-> tuple[bool,bool]:
     return  yoko,tate        
 
 
+def gameover(screen: pg.Surface) -> None:
+    black_img = pg.Surface((WIDTH,HEIGHT))
+    black_img.set_alpha(255)
+    screen.blit(black_img,(0,0))
+    gameover_font = pg.font.Font(None,50)
+    txt = gameover_font.render("GameOver",True,(255,255,255))
+    screen.blit(txt,[450,300]) 
+    gameover_img = pg.image.load("fig/8.png")
+    screen.blit(gameover_img,[400,275])
+    screen.blit(gameover_img,[650,275])
+    
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_imgs=[]
+    bb_accs = [a for a in range(1, 11)]
+    for r in range(1, 11):
+        bb_img = pg.Surface((20*r, 20*r))
+        bb_img.set_colorkey((0 , 0, 0))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_imgs.append(bb_img)
+    return bb_imgs,bb_accs
+        
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -35,36 +59,43 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 0.9)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
-    bb_img = pg.Surface((20, 20))  # 空のSurface
-    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)  # 半径10の赤い円を描画
-    bb_img.set_colorkey((0, 0, 0))  # 黒色を透過色に設定
+
+    bb_imgs,bb_accs = init_bb_imgs()
+    bb_img = bb_imgs[0]  # 空のSurface
     bb_rct = bb_img.get_rect()  # 爆弾Rect
     bb_rct.centerx = random.randint(0, WIDTH)  # 爆弾横座標
-    bb_rct.centery = random.randint(0, HEIGHT)  # 爆弾縦座標
+    bb_rct.centery = random.randint(0, HEIGHT)  # 爆弾縦座標     
+    bb_img.set_colorkey((0, 0, 0))  # 黒色を透過色に設定
+    
+    
     vx, vy = +5, +5  # 爆弾の横速度，縦速度
     clock = pg.time.Clock()
     tmr = 0
+    
+    
+
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT: 
                 return
             
+        
         if kk_rct.colliderect(bb_rct):
-            print("ゲームオーバー")
+            gameover(screen)
+            pg.display.update()
+            time.sleep(5)
             return
 
-        screen.blit(bg_img, [0, 0]) 
 
+        screen.blit(bg_img, [0, 0]) 
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
-        # if key_lst[pg.K_UP]:
-        #     sum_mv[1] -= 5
-        # if key_lst[pg.K_DOWN]:
-        #     sum_mv[1] += 5
-        # if key_lst[pg.K_LEFT]:
-        #     sum_mv[0] -= 5
-        # if key_lst[pg.K_RIGHT]:
-        #     sum_mv[0] += 5
+
+        idx = min(tmr//500,9)
+        center = bb_rct.center
+        bb_img = bb_imgs[idx]
+        bb_rct = bb_img.get_rect()
+        bb_rct.center = center
         for key, mv in DELTA.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0]  # 横方向の移動量
@@ -73,12 +104,19 @@ def main():
         if check_bound(kk_rct)!=(True,True):
             kk_rct.move_ip(-sum_mv[0],-sum_mv[1])
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)
+        
+
+        if tmr%500==0:
+            vx *= bb_accs[idx]
+            vy *=bb_accs[idx]
+        
         yoko,tate = check_bound(bb_rct)
+        
         if not yoko:
             vx *= -1
         if not tate:
             vy *= -1
+        
         bb_rct.move_ip(vx,vy)
         screen.blit(bb_img, bb_rct)
         pg.display.update()
