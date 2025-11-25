@@ -20,15 +20,22 @@ def check_bound(obj_rct:pg.Rect)-> tuple[bool,bool]:
     戻り値：判定結果タプル（横方向,縦方向）
     画面内ならTrue 画面外ならFalse
     """
-    yoko,tate =True,True
+    yoko,tate = True,True
     if obj_rct.left < 0 or WIDTH < obj_rct.right:
         yoko = False #横方向のはみだしチェック
     if obj_rct.top <0 or HEIGHT < obj_rct.bottom:
         tate = False
-    return  yoko,tate        
+    return  yoko, tate        
 
 
 def gameover(screen: pg.Surface) -> None:
+    """
+    gameover の Docstring
+    引数：スクリーン
+    戻り値：なし
+    ゲームオーバー時に黒い画面が表示され、白い文字でGameOverが表示される。
+    文字の左右にはこうかとんの画像が表示される。5秒後に閉じられる。
+    """
     black_img = pg.Surface((WIDTH,HEIGHT))
     black_img.set_alpha(255)
     screen.blit(black_img,(0,0))
@@ -44,14 +51,14 @@ def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
     """
     init_bb_imgs の Docstring
     
-    :return: bb_imgsに爆弾の画像
+    :return: bb_imgsに爆弾の
     :rtype: tuple[list[Surface], list[int]]
     """
-    bb_imgs=[]
+    bb_imgs = []
     bb_accs = [a for a in range(1, 11)]
     for r in range(1, 11):
         bb_img = pg.Surface((20*r, 20*r))
-        bb_img.sのt_colorkey((0 , 0, 0))
+        bb_img.colorkey((0 , 0, 0))
         pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
         bb_imgs.append(bb_img)
     return bb_imgs,bb_accs
@@ -112,9 +119,9 @@ def main():
         screen.blit(kk_img, kk_rct)
         
 
-        if tmr%500==0:
+        if tmr%500 == 0:
             vx *= bb_accs[idx]
-            vy *=bb_accs[idx]
+            vy *= bb_accs[idx]
         
         yoko,tate = check_bound(bb_rct)
         
