@@ -37,7 +37,7 @@ def gameover(screen: pg.Surface) -> None:
     文字の左右にはこうかとんの画像が表示される。5秒後に閉じられる。
     """
     black_img = pg.Surface((WIDTH,HEIGHT))
-    black_img.set_alpha(255)
+    black_img.set_alpha(120)
     screen.blit(black_img,(0,0))
     gameover_font = pg.font.Font(None,50)
     txt = gameover_font.render("GameOver",True,(255,255,255))
